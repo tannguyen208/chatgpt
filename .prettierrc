@@ -1,0 +1,16 @@
+{
+  "tabWidth": 2,
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "endOfLine": "crlf",
+  "printWidth": 80,
+  "semi": false,
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx"],
+      "options": {
+        "parser": "flow"
+      }
+    }
+  ]
+}
