@@ -19,6 +19,11 @@
   }
 }
 
+.message-item {
+  padding: var(--spacing-small);
+  border-radius: var(--spacing-tiny);
+}
+
 .mantine-Table-root {
   margin-bottom: var(--spacing-small);
 }

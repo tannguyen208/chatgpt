@@ -15,6 +15,7 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core'
+import {useDisclosure} from '@mantine/hooks'
 import {
   IconBrandGithub,
   IconDatabase,
@@ -50,6 +51,8 @@ export function Layout() {
   const {colorScheme, toggleColorScheme} = useMantineColorScheme()
   const navigate = useNavigate()
   const router = useRouter()
+  const [promptOpened, {open: openPrompt, close: closePrompt}] =
+    useDisclosure(false)
 
   const [search, setSearch] = useState('')
   const chatId = useChatId()
@@ -107,7 +110,21 @@ export function Layout() {
                   New Chat
                 </Button>
               )}
-              {tab === 'Prompts' && <CreatePromptModal />}
+              {tab === 'Prompts' && (
+                <>
+                  <Button
+                    fullWidth
+                    onClick={openPrompt}
+                    leftIcon={<IconPlus size={20} />}
+                  >
+                    New Prompt
+                  </Button>
+                  <CreatePromptModal
+                    isOpen={promptOpened}
+                    close={closePrompt}
+                  />
+                </>
+              )}
             </Box>
           </Navbar.Section>
           <Navbar.Section
