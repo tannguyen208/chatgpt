@@ -6,7 +6,7 @@
   "scripts": {
     "start": "parcel",
     "build": "yarn clean:output && parcel build --no-source-maps --public-url ./",
-    "deploy": "gh-pages -d dist",
+    "deploy": "yarn build && gh-pages -d dist",
     "clean:output": "rimraf dist",
     "prepare": "husky install",
     "prettier": "prettier --write ."
@@ -51,6 +51,7 @@
     "nanoid": "^4.0.1",
     "next": "13.2.4",
     "openai": "^3.2.1",
+    "prism-react-renderer": "^1.3.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",

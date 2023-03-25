@@ -1,25 +1,14 @@
-import {
-  ActionIcon,
-  Box,
-  Card,
-  Code,
-  CopyButton,
-  Flex,
-  Table,
-  Text,
-  ThemeIcon,
-  Tooltip,
-} from '@mantine/core'
-import {Prism} from '@mantine/prism'
-import {IconCopy, IconUser} from '@tabler/icons-react'
 import {useMemo} from 'react'
+import {Box, Card, Flex, Table, Text, ThemeIcon} from '@mantine/core'
+import {IconUser} from '@tabler/icons-react'
 import ReactMarkdown from 'react-markdown'
-import {Language} from 'prism-react-renderer'
 import remarkGfm from 'remark-gfm'
 import {Message} from '../db'
 import {CreatePromptModal} from './CreatePromptModal'
 import {LogoIcon} from './Logo'
+import {MessageItemCode} from './MessageItemCode'
 import {ScrollIntoView} from './ScrollIntoView'
+
 import '../styles/markdown.scss'
 
 export function MessageItem({message}: {message: Message}) {
@@ -47,44 +36,17 @@ export function MessageItem({message}: {message: Message}) {
                   remarkPlugins={[remarkGfm]}
                   components={{
                     table: ({node, ...props}) => (
-                      <Table verticalSpacing="sm" highlightOnHover {...props} />
+                      <Table
+                        striped
+                        withBorder
+                        highlightOnHover
+                        fontSize="xs"
+                        verticalSpacing="xs"
+                        horizontalSpacing="xs"
+                        {...props}
+                      />
                     ),
-                    code: ({node, inline, className, ...props}) => {
-                      const lang = className?.replace('language-', '') || 'bash'
-                      const code = (
-                        <Prism language={lang as Language} {...props}>
-                          {(props.children[0]?.toString() as string) || ''}
-                        </Prism>
-                      )
-
-                      return (
-                        <Box sx={{position: 'relative'}}>
-                          {code}
-                          {/* <Code block {...props} /> */}
-                          {!inline && (
-                            <CopyButton value={String(props.children)}>
-                              {({copied, copy}) => (
-                                <Tooltip
-                                  label={copied ? 'Copied' : 'Copy'}
-                                  position="left"
-                                >
-                                  <ActionIcon
-                                    sx={{
-                                      position: 'absolute',
-                                      top: 4,
-                                      right: 4,
-                                    }}
-                                    onClick={copy}
-                                  >
-                                    <IconCopy opacity={0.4} size={20} />
-                                  </ActionIcon>
-                                </Tooltip>
-                              )}
-                            </CopyButton>
-                          )}
-                        </Box>
-                      )
-                    },
+                    code: ({node, ...props}) => <MessageItemCode {...props} />,
                   }}
                 />
                 {message.role === 'assistant' && (

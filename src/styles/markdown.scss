@@ -18,3 +18,29 @@
     padding-left: 4px;
   }
 }
+
+.mantine-Table-root {
+  margin-bottom: var(--spacing-small);
+}
+
+.dark-theme .mantine-Prism-copy {
+  color: #88898d;
+  background-color: transparent;
+  &:hover {
+    background-color: rgba(52, 58, 64, 0.2);
+  }
+}
+
+.light-theme {
+  .mantine-Prism-copy {
+    color: #bec3c7;
+    background-color: transparent;
+    &:hover {
+      background-color: rgba(248, 249, 250, 1);
+    }
+  }
+
+  .mantine-Prism-code {
+    background-color: #f8fafc !important;
+  }
+}

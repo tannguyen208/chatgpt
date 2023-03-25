@@ -3,7 +3,6 @@
   --spacing-small: 8px;
   --spacing-medium: 16px;
   --spacing-large: 24px;
-  --spacing-small: 8px;
 }
 
 body {
@@ -13,7 +12,7 @@ body {
     Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji !important;
 }
 
-.mantine-othpma {
+.mantine-Paper-root {
   padding: var(--spacing-small);
 }
 
