@@ -2,13 +2,13 @@ import {Button, Modal, Stack, TextInput} from '@mantine/core'
 import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {cloneElement, ReactElement, useEffect, useState} from 'react'
-import {Chat, db} from '../db'
+import {ChatEntity, db} from '../db'
 
 export function EditChatModal({
   chat,
   children,
 }: {
-  chat: Chat
+  chat: ChatEntity
   children: ReactElement
 }) {
   const [opened, {open, close}] = useDisclosure(false)

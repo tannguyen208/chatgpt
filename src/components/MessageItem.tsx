@@ -11,23 +11,29 @@ import {
   IconDotsVertical,
   IconEdit,
   IconPlaylistAdd,
+  IconSend,
   IconTrash,
   IconUser,
 } from '@tabler/icons-react'
 import {useMemo} from 'react'
+import {useDisclosure} from '@mantine/hooks'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import {Message} from '../db'
 import {CreatePromptModal} from './CreatePromptModal'
 import {LogoIcon} from './Logo'
 import {MessageItemCode} from './MessageItemCode'
 import {ScrollIntoView} from './ScrollIntoView'
-
-import {useDisclosure} from '@mantine/hooks'
+import {ResendMessageEntityItemModal} from './ResendChatMessageItemModal'
+import {DeleteMessageEntityItemModal} from './DeleteChatMessageItemModal'
+import {MessageEntity} from '../db'
 import '../styles/markdown.scss'
 
-export function MessageItem({message}: {message: Message}) {
+export function MessageItem({message}: {message: MessageEntity}) {
   const [promptOpened, {open: openPrompt, close: closePrompt}] =
+    useDisclosure(false)
+  const [resendOpened, {open: openResend, close: closeResend}] =
+    useDisclosure(false)
+  const [deleteOpened, {open: openDelete, close: closeDelete}] =
     useDisclosure(false)
 
   const wordCount = useMemo(() => {
@@ -87,23 +93,39 @@ export function MessageItem({message}: {message: Message}) {
           </Menu.Target>
 
           <Menu.Dropdown>
-            {/* <Menu.Item icon={<IconEdit size={14} />}>Edit</Menu.Item> */}
+            <Menu.Item onClick={openResend} icon={<IconSend size={14} />}>
+              Resend
+            </Menu.Item>
             <Menu.Item
               onClick={openPrompt}
               icon={<IconPlaylistAdd size={14} />}
             >
               Save Prompt
             </Menu.Item>
-            {/* <Menu.Item color="red" icon={<IconTrash size={14} />}>
+            <Menu.Item
+              onClick={openDelete}
+              color="red"
+              icon={<IconTrash size={14} />}
+            >
               Delete
-            </Menu.Item> */}
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
 
+        <ResendMessageEntityItemModal
+          message={message}
+          isOpen={resendOpened}
+          close={closeResend}
+        />
         <CreatePromptModal
           isOpen={promptOpened}
           close={closePrompt}
           content={message.content}
+        />
+        <DeleteMessageEntityItemModal
+          message={message}
+          isOpen={deleteOpened}
+          close={closeDelete}
         />
       </Flex>
     </ScrollIntoView>

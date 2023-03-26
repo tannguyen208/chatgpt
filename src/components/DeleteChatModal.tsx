@@ -3,7 +3,7 @@ import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {useNavigate} from '@tanstack/react-location'
 import {cloneElement, ReactElement, useEffect, useState} from 'react'
-import {Chat, db} from '../db'
+import {ChatEntity, db} from '../db'
 import {useApiKey} from '../hooks/useApiKey'
 import {useChatId} from '../hooks/useChatId'
 
@@ -11,7 +11,7 @@ export function DeleteChatModal({
   chat,
   children,
 }: {
-  chat: Chat
+  chat: ChatEntity
   children: ReactElement
 }) {
   const [opened, {open, close}] = useDisclosure(false)
