@@ -115,15 +115,12 @@ export function Prompts({
                     .setRepliedId(messageId)
                     .add()
 
-                  // if (result.data.usage) {
-                  //   await db.chats.where({id: chatId}).modify((chat) => {
-                  //     if (chat.totalTokens) {
-                  //       chat.totalTokens += result.data.usage!.total_tokens
-                  //     } else {
-                  //       chat.totalTokens = result.data.usage!.total_tokens
-                  //     }
-                  //   })
-                  // }
+                  if (result.data.usage) {
+                    await db.chats.where({id: chatId}).modify((chat) => {
+                      const totalTokens = result.data.usage!.total_tokens
+                      chat.totalTokens = (chat.totalTokens || 0) + totalTokens
+                    })
+                  }
 
                   setCloseThinking()
                 }}

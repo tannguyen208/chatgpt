@@ -1,10 +1,9 @@
-import {nanoid} from 'nanoid'
+import {notifications} from '@mantine/notifications'
+import {IndexableType} from 'dexie'
 import {useLiveQuery} from 'dexie-react-hooks'
 import {ChatCompletionRequestMessage} from 'openai'
-import {notifications} from '@mantine/notifications'
 import {db} from '../db'
 import {createChatCompletion} from '../utils/openai'
-import {IndexableType} from 'dexie'
 
 export function useChatGPT() {
   const apiKey = useLiveQuery(async () => {
@@ -56,7 +55,7 @@ export function useChatGPT() {
 
     // If content exists, add it to messagesCached array as a new user message with role as 'user'
     if (content && typeof content === 'string') {
-      messagesCached.push({role: 'user', content: content.trim()})
+      messagesSending.push({role: 'user', content: content.trim()})
     }
 
     return createChatCompletion(apiKey, messagesSending)

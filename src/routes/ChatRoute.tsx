@@ -93,15 +93,12 @@ export function ChatRoute() {
       })
 
       // * Update total token usage
-      // if (result.data.usage) {
-      //   await db.chats.where({id: chatId}).modify((chat) => {
-      //     if (chat.totalTokens) {
-      //       chat.totalTokens += result.data.usage!.total_tokens
-      //     } else {
-      //       chat.totalTokens = result.data.usage!.total_tokens
-      //     }
-      //   })
-      // }
+      if (result.data.usage) {
+        await db.chats.where({id: chatId}).modify((chat) => {
+          const totalTokens = result.data.usage!.total_tokens
+          chat.totalTokens = (chat.totalTokens || 0) + totalTokens
+        })
+      }
 
       const assistantMessage = result.data.choices[0].message?.content
       await MessageEntity._()
@@ -121,19 +118,17 @@ export function ChatRoute() {
           content:
             'What would be a short and relevant title for this chat? You must strictly answer with only the title, no other text is allowed.',
         })
-        // const chatDescription =
-        //   createChatDescription.data.choices[0].message?.content
+        const chatDescription =
+          createChatDescription.data.choices[0].message?.content
 
-        // if (createChatDescription.data.usage) {
-        //   await db.chats.where({id: chatId}).modify((chat) => {
-        //     chat.description = chatDescription ?? 'New Chat'
-        //     if (chat.totalTokens) {
-        //       chat.totalTokens += createChatDescription.data.usage!.total_tokens
-        //     } else {
-        //       chat.totalTokens = createChatDescription.data.usage!.total_tokens
-        //     }
-        //   })
-        // }
+        if (createChatDescription.data.usage) {
+          await db.chats.where({id: chatId}).modify((chat) => {
+            const totalTokens = createChatDescription.data.usage!.total_tokens
+
+            chat.description = chatDescription ?? 'New Chat'
+            chat.totalTokens = (chat.totalTokens || 0) + totalTokens
+          })
+        }
       }
     } catch (error: any) {
       if (error.toJSON().message === 'Network Error') {
