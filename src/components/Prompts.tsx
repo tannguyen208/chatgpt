@@ -2,10 +2,10 @@ import {ActionIcon, Box, Flex, Group, Text, Tooltip} from '@mantine/core'
 import {IconPlayerPlay} from '@tabler/icons-react'
 import {useNavigate} from '@tanstack/react-location'
 import {useLiveQuery} from 'dexie-react-hooks'
-import {nanoid} from 'nanoid'
 import {useMemo} from 'react'
-import {db} from '../db'
-import {createChatCompletion} from '../utils/openai'
+import {ChatEntity, db, ERole, MessageEntity} from '../db'
+import {useChatGPT} from '../hooks/useChatGPT'
+import {useSharedThinking} from '../hooks/useSharedThinking'
 import {DeletePromptModal} from './DeletePromptModal'
 import {EditPromptModal} from './EditPromptModal'
 
@@ -16,6 +16,7 @@ export function Prompts({
   onPlay: () => void
   search: string
 }) {
+  const chatGPT = useChatGPT()
   const navigate = useNavigate()
   const prompts = useLiveQuery(() =>
     db.prompts.orderBy('createdAt').reverse().toArray()
@@ -34,6 +35,7 @@ export function Prompts({
   const apiKey = useLiveQuery(async () => {
     return (await db.settings.where({id: 'general'}).first())?.openAiApiKey
   })
+  const {setOpenThinking, setCloseThinking} = useSharedThinking()
 
   return (
     <>
@@ -85,51 +87,45 @@ export function Prompts({
                 size="lg"
                 onClick={async () => {
                   if (!apiKey) return
-                  const id = nanoid()
-                  await db.chats.add({
-                    id,
-                    description: 'New Chat',
-                    totalTokens: 0,
-                    createdAt: new Date(),
-                  })
-                  await db.messages.add({
-                    id: nanoid(),
-                    chatId: id,
-                    content: prompt.content,
-                    role: 'user',
-                    createdAt: new Date(),
-                  })
-                  navigate({to: `/chats/${id}`})
+
+                  const chatId = await ChatEntity._().add()
+                  const messageId = await MessageEntity._()
+                    .setChatId(chatId)
+                    .setRole(ERole.USER)
+                    .setContent(prompt.content)
+                    .add()
+
+                  navigate({to: `/chats/${chatId}`})
                   onPlay()
 
-                  const result = await createChatCompletion(apiKey, [
-                    {
-                      role: 'system',
-                      content:
-                        'You are ChatGPT, a large language model trained by OpenAI.',
-                    },
-                    {role: 'user', content: prompt.content},
-                  ])
+                  setOpenThinking()
+                  const result = await chatGPT.sendMessage({
+                    chatId,
+                    systemContent:
+                      'You are ChatGPT, a large language model trained by OpenAI.',
+                  })
 
                   const resultDescription =
                     result.data.choices[0].message?.content
-                  await db.messages.add({
-                    id: nanoid(),
-                    chatId: id,
-                    content: resultDescription ?? 'unknown reponse',
-                    role: 'assistant',
-                    createdAt: new Date(),
-                  })
 
-                  if (result.data.usage) {
-                    await db.chats.where({id: id}).modify((chat) => {
-                      if (chat.totalTokens) {
-                        chat.totalTokens += result.data.usage!.total_tokens
-                      } else {
-                        chat.totalTokens = result.data.usage!.total_tokens
-                      }
-                    })
-                  }
+                  await MessageEntity._()
+                    .setChatId(chatId)
+                    .setRole(ERole.ASSISTANT)
+                    .setContent(resultDescription)
+                    .setRepliedId(messageId)
+                    .add()
+
+                  // if (result.data.usage) {
+                  //   await db.chats.where({id: chatId}).modify((chat) => {
+                  //     if (chat.totalTokens) {
+                  //       chat.totalTokens += result.data.usage!.total_tokens
+                  //     } else {
+                  //       chat.totalTokens = result.data.usage!.total_tokens
+                  //     }
+                  //   })
+                  // }
+
+                  setCloseThinking()
                 }}
               >
                 <IconPlayerPlay size={20} />

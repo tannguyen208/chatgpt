@@ -51,7 +51,6 @@ export function SettingsModal({children}: {children: ReactElement}) {
                 await checkOpenAIKey(value)
                 await db.settings.where({id: 'general'}).modify((apiKey) => {
                   apiKey.openAiApiKey = value
-                  console.log(apiKey)
                 })
                 notifications.show({
                   title: 'Saved',

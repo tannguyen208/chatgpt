@@ -36,10 +36,8 @@ export function EditPromptModal({prompt}: {prompt: Prompt}) {
                 chat.title = title
                 chat.content = value
               })
-              notifications.show({
-                title: 'Saved',
-                message: 'Prompt updated',
-              })
+              notifications.show({title: 'Saved', message: 'Prompt updated'})
+              close()
             } catch (error: any) {
               if (error.toJSON().message === 'Network Error') {
                 notifications.show({
@@ -50,11 +48,7 @@ export function EditPromptModal({prompt}: {prompt: Prompt}) {
               }
               const message = error.response?.data?.error?.message
               if (message) {
-                notifications.show({
-                  title: 'Error',
-                  color: 'red',
-                  message,
-                })
+                notifications.show({title: 'Error', color: 'red', message})
               }
             } finally {
               setSubmitting(false)

@@ -27,11 +27,8 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import {Outlet, useNavigate, useRouter} from '@tanstack/react-location'
-import {useLiveQuery} from 'dexie-react-hooks'
-import {nanoid} from 'nanoid'
 import {useEffect, useState} from 'react'
-import {db} from '../db'
-import {useChatId} from '../hooks/useChatId'
+import {ChatEntity} from '../db'
 import {Chats} from './Chats'
 import {CreatePromptModal} from './CreatePromptModal'
 import {DatabaseModal} from './DatabaseModal'
@@ -55,11 +52,6 @@ export function Layout() {
     useDisclosure(false)
 
   const [search, setSearch] = useState('')
-  const chatId = useChatId()
-  const chat = useLiveQuery(async () => {
-    if (!chatId) return null
-    return db.chats.get(chatId)
-  }, [chatId])
 
   const border = `${rem(1)} solid ${
     theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
@@ -97,14 +89,8 @@ export function Layout() {
                   fullWidth
                   leftIcon={<IconPlus size={20} />}
                   onClick={() => {
-                    const id = nanoid()
-                    db.chats.add({
-                      id,
-                      description: 'New Chat',
-                      totalTokens: 0,
-                      createdAt: new Date(),
-                    })
-                    navigate({to: `/chats/${id}`})
+                    const chatId = ChatEntity._().add()
+                    navigate({to: `/chats/${chatId}`})
                   }}
                 >
                   New Chat

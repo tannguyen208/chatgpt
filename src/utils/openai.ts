@@ -25,10 +25,5 @@ export async function createChatCompletion(
 }
 
 export async function checkOpenAIKey(apiKey: string) {
-  return createChatCompletion(apiKey, [
-    {
-      role: 'user',
-      content: 'hello',
-    },
-  ])
+  return createChatCompletion(apiKey, [{role: 'user', content: 'hello'}])
 }
