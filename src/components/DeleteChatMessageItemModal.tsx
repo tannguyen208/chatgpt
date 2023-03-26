@@ -20,6 +20,7 @@ export function DeleteMessageEntityItemModal({
         onSubmit={(event) => {
           try {
             event.preventDefault()
+
             let ids = [message.id]
             if (message.repliedId) ids.push(message.repliedId)
             ids.forEach(async (id) => {
