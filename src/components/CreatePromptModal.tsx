@@ -1,11 +1,10 @@
 import {Button, Modal, Stack, Textarea, TextInput} from '@mantine/core'
 import {notifications} from '@mantine/notifications'
-import {IconPlus} from '@tabler/icons-react'
 import {nanoid} from 'nanoid'
-import {useEffect, useState} from 'react'
+import {memo, useEffect, useState} from 'react'
 import {db} from '../db'
 
-export function CreatePromptModal({
+export const CreatePromptModal = memo(function CreatePromptModal({
   content,
   isOpen,
   close,
@@ -92,4 +91,4 @@ export function CreatePromptModal({
       </form>
     </Modal>
   )
-}
+})

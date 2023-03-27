@@ -4,12 +4,16 @@ import {notifications} from '@mantine/notifications'
 import {IconDatabaseExport, IconDatabaseImport} from '@tabler/icons-react'
 import {useLiveQuery} from 'dexie-react-hooks'
 import download from 'downloadjs'
-import {cloneElement, ReactElement} from 'react'
+import {cloneElement, memo, ReactElement} from 'react'
 import {db} from '../db'
 import {DeleteAllDataModal} from './DeleteAllDataModal'
 import {DeleteChatsModal} from './DeleteChatsModal'
 
-export function DatabaseModal({children}: {children: ReactElement}) {
+export const DatabaseModal = memo(function DatabaseModal({
+  children,
+}: {
+  children: ReactElement
+}) {
   const [opened, {open, close}] = useDisclosure(false)
   const chatsCount = useLiveQuery(async () => {
     return (await db.chats.toArray()).length
@@ -142,4 +146,4 @@ export function DatabaseModal({children}: {children: ReactElement}) {
       </Modal>
     </>
   )
-}
+})

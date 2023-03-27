@@ -1,9 +1,14 @@
 import {Button, Modal, Stack, Text} from '@mantine/core'
 import {useDisclosure} from '@mantine/hooks'
 import {IconTrash} from '@tabler/icons-react'
+import {memo} from 'react'
 import {db} from '../db'
 
-export function DeleteChatsModal({onOpen}: {onOpen: () => void}) {
+export const DeleteChatsModal = memo(function DeleteChatsModal({
+  onOpen,
+}: {
+  onOpen: () => void
+}) {
   const [opened, {open, close}] = useDisclosure(false, {onOpen})
 
   return (
@@ -40,4 +45,4 @@ export function DeleteChatsModal({onOpen}: {onOpen: () => void}) {
       </Modal>
     </>
   )
-}
+})

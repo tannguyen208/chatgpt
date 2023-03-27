@@ -15,7 +15,7 @@ import {
   IconTrash,
   IconUser,
 } from '@tabler/icons-react'
-import {useMemo} from 'react'
+import {memo, useMemo} from 'react'
 import {useDisclosure} from '@mantine/hooks'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -28,7 +28,11 @@ import {DeleteMessageEntityItemModal} from './DeleteChatMessageItemModal'
 import {MessageEntity} from '../db'
 import '../styles/markdown.scss'
 
-export function MessageItem({message}: {message: MessageEntity}) {
+export const MessageItem = memo(function MessageItem({
+  message,
+}: {
+  message: MessageEntity
+}) {
   const [promptOpened, {open: openPrompt, close: closePrompt}] =
     useDisclosure(false)
   const [resendOpened, {open: openResend, close: closeResend}] =
@@ -130,4 +134,4 @@ export function MessageItem({message}: {message: MessageEntity}) {
       </Flex>
     </ScrollIntoView>
   )
-}
+})

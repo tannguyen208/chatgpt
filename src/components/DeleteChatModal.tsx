@@ -2,12 +2,11 @@ import {Button, Modal, Stack, Text} from '@mantine/core'
 import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {useNavigate} from '@tanstack/react-location'
-import {cloneElement, ReactElement, useEffect, useState} from 'react'
+import {cloneElement, memo, ReactElement, useState} from 'react'
 import {ChatEntity, db} from '../db'
-import {useApiKey} from '../hooks/useApiKey'
 import {useChatId} from '../hooks/useChatId'
 
-export function DeleteChatModal({
+export const DeleteChatModal = memo(function DeleteChatModal({
   chat,
   children,
 }: {
@@ -17,12 +16,6 @@ export function DeleteChatModal({
   const [opened, {open, close}] = useDisclosure(false)
   const [submitting, setSubmitting] = useState(false)
 
-  const [key, setKey] = useApiKey()
-
-  const [value, setValue] = useState('')
-  useEffect(() => {
-    setValue(key)
-  }, [key])
   const chatId = useChatId()
   const navigate = useNavigate()
 
@@ -76,4 +69,4 @@ export function DeleteChatModal({
       </Modal>
     </>
   )
-}
+})

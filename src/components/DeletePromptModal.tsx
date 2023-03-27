@@ -2,10 +2,14 @@ import {ActionIcon, Button, Modal, Stack, Text, Tooltip} from '@mantine/core'
 import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {IconTrash} from '@tabler/icons-react'
-import {useState} from 'react'
+import {memo, useState} from 'react'
 import {db, Prompt} from '../db'
 
-export function DeletePromptModal({prompt}: {prompt: Prompt}) {
+export const DeletePromptModal = memo(function DeletePromptModal({
+  prompt,
+}: {
+  prompt: Prompt
+}) {
   const [opened, {open, close}] = useDisclosure(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -56,4 +60,4 @@ export function DeletePromptModal({prompt}: {prompt: Prompt}) {
       </Tooltip>
     </>
   )
-}
+})

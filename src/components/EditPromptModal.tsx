@@ -10,10 +10,14 @@ import {
 import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {IconPencil} from '@tabler/icons-react'
-import {useEffect, useState} from 'react'
+import {memo, useEffect, useState} from 'react'
 import {db, Prompt} from '../db'
 
-export function EditPromptModal({prompt}: {prompt: Prompt}) {
+export const EditPromptModal = memo(function EditPromptModal({
+  prompt,
+}: {
+  prompt: Prompt
+}) {
   const [opened, {open, close}] = useDisclosure(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -84,4 +88,4 @@ export function EditPromptModal({prompt}: {prompt: Prompt}) {
       </Tooltip>
     </>
   )
-}
+})

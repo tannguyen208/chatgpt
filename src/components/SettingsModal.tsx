@@ -13,12 +13,16 @@ import {
 import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {useLiveQuery} from 'dexie-react-hooks'
-import {cloneElement, ReactElement, useEffect, useState} from 'react'
+import {cloneElement, memo, ReactElement, useEffect, useState} from 'react'
 import {db} from '../db'
 import {availableModels, defaultModel} from '../utils/constants'
 import {checkOpenAIKey} from '../utils/openai'
 
-export function SettingsModal({children}: {children: ReactElement}) {
+export const SettingsModal = memo(function SettingsModal({
+  children,
+}: {
+  children: ReactElement
+}) {
   const [opened, {open, close}] = useDisclosure(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -128,4 +132,4 @@ export function SettingsModal({children}: {children: ReactElement}) {
       </Modal>
     </>
   )
-}
+})

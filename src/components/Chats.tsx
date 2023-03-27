@@ -2,14 +2,14 @@ import {ActionIcon, Flex, Menu} from '@mantine/core'
 import {IconDotsVertical, IconMessages} from '@tabler/icons-react'
 import {Link} from '@tanstack/react-location'
 import {useLiveQuery} from 'dexie-react-hooks'
-import {useMemo} from 'react'
+import {useMemo, memo} from 'react'
 import {db} from '../db'
 import {useChatId} from '../hooks/useChatId'
 import {DeleteChatModal} from './DeleteChatModal'
 import {EditChatModal} from './EditChatModal'
 import {MainLink} from './MainLink'
 
-export function Chats({search}: {search: string}) {
+export const Chats = memo(function ({search}: {search: string}) {
   const chatId = useChatId()
   const chats = useLiveQuery(() =>
     db.chats.orderBy('createdAt').reverse().toArray()
@@ -66,4 +66,4 @@ export function Chats({search}: {search: string}) {
       ))}
     </>
   )
-}
+})

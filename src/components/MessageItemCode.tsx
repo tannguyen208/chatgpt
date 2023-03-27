@@ -12,6 +12,7 @@ import {IconCopy, IconSettings} from '@tabler/icons-react'
 import Highlight, {defaultProps} from 'prism-react-renderer'
 import codeLight from 'prism-react-renderer/themes/github'
 import codeDark from 'prism-react-renderer/themes/vsDark'
+import {memo} from 'react'
 import styled from 'styled-components'
 import '../styles/markdown.scss'
 
@@ -41,7 +42,7 @@ export const LineContent = styled.span`
   display: table-cell;
 `
 
-export function MessageItemCode(props: any) {
+export const MessageItemCode = memo(function MessageItemCode(props: any) {
   const theme = useMantineTheme()
   const lang = props.className?.replace('language-', '')
   const strings = props.children.join(' ').trim()
@@ -107,4 +108,4 @@ export function MessageItemCode(props: any) {
       </Highlight>
     </Box>
   )
-}
+})
