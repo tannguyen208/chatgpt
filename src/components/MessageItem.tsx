@@ -73,7 +73,10 @@ export function MessageItem({message}: {message: MessageEntity}) {
                   {...props}
                 />
               ),
-              code: ({node, ...props}) => <MessageItemCode {...props} />,
+              code: ({node, ...props}) => {
+                console.log(props)
+                return <MessageItemCode {...props} />
+              },
             }}
           />
           {message.role === 'assistant' && (
