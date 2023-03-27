@@ -5,9 +5,10 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel",
-    "build": "yarn clean:output && parcel build --no-source-maps --public-url ./",
-    "deploy": "yarn build && gh-pages -d dist",
-    "clean:output": "rimraf dist",
+    "build": "parcel build --no-source-maps --public-url ./",
+    "clean": "rimraf dist",
+    "publish": "gh-pages -d dist",
+    "deploy": "npm-run-all --parallel clean build publish",
     "prepare": "husky install",
     "prettier": "prettier --write ."
   },
@@ -24,6 +25,7 @@
     "gh-pages": "^5.0.0",
     "git-format-staged": "^3.0.0",
     "husky": "^8.0.3",
+    "npm-run-all": "^4.1.5",
     "parcel": "^2.8.3",
     "prettier": "^2.8.6",
     "process": "^0.11.10",
