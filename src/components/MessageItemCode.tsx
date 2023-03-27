@@ -68,7 +68,7 @@ export function MessageItemCode(props: any) {
       >
         <IconSettings opacity={0.5} size={20} width={38} />
         <Text style={{flex: 1}} fw={700}>
-          {lang?.toUpperCase() || 'CODE'}
+          {lang?.toUpperCase() || 'BASE'}
         </Text>
         <CopyButton value={String(strings)}>
           {({copied, copy}) => (

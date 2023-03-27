@@ -4,7 +4,6 @@ import {
   Card,
   Container,
   Flex,
-  MediaQuery,
   Select,
   SimpleGrid,
   Skeleton,
@@ -272,11 +271,9 @@ export function ChatRoute() {
                 }
               }}
             />
-            <MediaQuery largerThan="sm" styles={{display: 'none'}}>
-              <Button h="auto" onClick={submit}>
-                <AiOutlineSend />
-              </Button>
-            </MediaQuery>
+            <Button h="auto" onClick={submit}>
+              <AiOutlineSend />
+            </Button>
           </Flex>
         </Container>
       </Box>

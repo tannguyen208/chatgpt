@@ -2,24 +2,12 @@ import {ActionIcon, Button, Modal, Stack, Text, Tooltip} from '@mantine/core'
 import {useDisclosure} from '@mantine/hooks'
 import {notifications} from '@mantine/notifications'
 import {IconTrash} from '@tabler/icons-react'
-import {useNavigate} from '@tanstack/react-location'
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import {db, Prompt} from '../db'
-import {useApiKey} from '../hooks/useApiKey'
-import {useChatId} from '../hooks/useChatId'
 
 export function DeletePromptModal({prompt}: {prompt: Prompt}) {
   const [opened, {open, close}] = useDisclosure(false)
   const [submitting, setSubmitting] = useState(false)
-
-  const [key, setKey] = useApiKey()
-
-  const [value, setValue] = useState('')
-  useEffect(() => {
-    setValue(key)
-  }, [key])
-  const chatId = useChatId()
-  const navigate = useNavigate()
 
   return (
     <>
@@ -32,10 +20,7 @@ export function DeletePromptModal({prompt}: {prompt: Prompt}) {
               await db.prompts.where({id: prompt.id}).delete()
               close()
 
-              notifications.show({
-                title: 'Deleted',
-                message: 'Chat deleted.',
-              })
+              notifications.show({title: 'Deleted', message: 'Chat deleted.'})
             } catch (error: any) {
               if (error.toJSON().message === 'Network Error') {
                 notifications.show({
