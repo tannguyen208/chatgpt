@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "sse.d.ts"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "esModuleInterop": true,

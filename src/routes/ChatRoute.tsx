@@ -16,7 +16,7 @@ import {findLast} from 'lodash'
 import {useState} from 'react'
 import {AiOutlineSend} from 'react-icons/ai'
 import {MessageItem} from '../components/MessageItem'
-import {db, ERole, MessageEntity} from '../db'
+import {db, ChatRole, MessageEntity} from '../db'
 import {useChatGPT} from '../hooks/useChatGPT'
 import {useChatId} from '../hooks/useChatId'
 import {useSharedThinking} from '../hooks/useSharedThinking'
@@ -26,10 +26,12 @@ import {
   writingStyles,
   writingTones,
 } from '../utils/constants'
+import {ChatMessage, useChatCompletion} from '../hooks/useChatCompletion'
 
 export function ChatRoute() {
   const chatId = useChatId()
-  const chatGPT = useChatGPT()
+  // const chatGPT = useChatGPT()
+  const chatCompletion = useChatCompletion()
   const messages = useLiveQuery(() => {
     if (!chatId) return []
     return db.messages.where('chatId').equals(chatId).sortBy('createdAt')
@@ -64,7 +66,6 @@ export function ChatRoute() {
 
   const submit = async () => {
     if (submitting) return
-
     if (!chatId) {
       notifications.show({
         title: 'Error',
@@ -74,44 +75,41 @@ export function ChatRoute() {
       return
     }
 
-    if (!chatGPT.checkAPIKey()) return
-
     try {
       setOpenThinking()
 
-      const messageId = await MessageEntity._()
+      const userMessageId = await MessageEntity._()
         .setChatId(chatId)
-        .setRole(ERole.USER)
+        .setRole(ChatRole.USER)
         .setContent(content)
         .add()
       setContent('')
 
-      const result = await chatGPT.sendMessage({
+      const messagesSending = await chatCompletion.makeMessagesSendingRequest({
         chatId,
         systemContent: getSystemMessage(),
       })
 
-      // * Update total token usage
-      if (result.data.usage) {
-        await db.chats.where({id: chatId}).modify((chat) => {
-          const totalTokens = result.data.usage!.total_tokens
-          chat.totalTokens = (chat.totalTokens || 0) + totalTokens
-        })
-      }
-
-      const assistantMessage = result.data.choices[0].message?.content
-      await MessageEntity._()
+      const assistantMessageReceivedId = await MessageEntity._()
         .setChatId(chatId)
-        .setRole(ERole.ASSISTANT)
-        .setContent(assistantMessage)
-        .setRepliedId(messageId)
+        .setRole(ChatRole.ASSISTANT)
+        .setContent('')
+        .setRepliedId(userMessageId)
         .add()
+
+      chatCompletion.send(messagesSending, async (chatMessage: ChatMessage) => {
+        await db.messages
+          .where({id: assistantMessageReceivedId})
+          .modify((message) => {
+            message.content = chatMessage.content
+          })
+      })
 
       setCloseThinking()
 
       // Upgrade title of the chat
       if (chat?.description === 'New Chat') {
-        const createChatDescription = await chatGPT.sendMessage({
+        const createChatDescription = await chatCompletion.sendMessage({
           systemContent: getSystemMessage(),
           chatId,
           content:
@@ -146,13 +144,95 @@ export function ChatRoute() {
     }
   }
 
+  // const submit = async () => {
+  //   if (submitting) return
+
+  //   if (!chatId) {
+  //     notifications.show({
+  //       title: 'Error',
+  //       color: 'red',
+  //       message: 'chatId is not defined. Please create a chat to get started.',
+  //     })
+  //     return
+  //   }
+
+  //   try {
+  //     setOpenThinking()
+
+  //     const messageId = await MessageEntity._()
+  //       .setChatId(chatId)
+  //       .setRole(ChatRole.USER)
+  //       .setContent(content)
+  //       .add()
+  //     setContent('')
+
+  //     const result = await chatGPT.sendMessage({
+  //       chatId,
+  //       systemContent: getSystemMessage(),
+  //     })
+
+  //     // * Update total token usage
+  //     if (result.data.usage) {
+  //       await db.chats.where({id: chatId}).modify((chat) => {
+  //         const totalTokens = result.data.usage!.total_tokens
+  //         chat.totalTokens = (chat.totalTokens || 0) + totalTokens
+  //       })
+  //     }
+
+  //     const assistantMessage = result.data.choices[0].message?.content
+  //     await MessageEntity._()
+  //       .setChatId(chatId)
+  //       .setRole(ChatRole.ASSISTANT)
+  //       .setContent(assistantMessage)
+  //       .setRepliedId(messageId)
+  //       .add()
+
+  //     setCloseThinking()
+
+  //     // Upgrade title of the chat
+  //     if (chat?.description === 'New Chat') {
+  //       const createChatDescription = await chatGPT.sendMessage({
+  //         systemContent: getSystemMessage(),
+  //         chatId,
+  //         content:
+  //           'What would be a short and relevant title for this chat? You must strictly answer with only the title, no other text is allowed.',
+  //       })
+  //       const chatDescription =
+  //         createChatDescription.data.choices[0].message?.content
+
+  //       if (createChatDescription.data.usage) {
+  //         await db.chats.where({id: chatId}).modify((chat) => {
+  //           const totalTokens = createChatDescription.data.usage!.total_tokens
+
+  //           chat.description = chatDescription ?? 'New Chat'
+  //           chat.totalTokens = (chat.totalTokens || 0) + totalTokens
+  //         })
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     if (error.toJSON().message === 'Network Error') {
+  //       notifications.show({
+  //         title: 'Error',
+  //         color: 'red',
+  //         message: 'No internet connection.',
+  //       })
+  //     }
+  //     const message = error.response?.data?.error?.message
+  //     if (message) {
+  //       notifications.show({title: 'Error', color: 'red', message})
+  //     }
+  //   } finally {
+  //     setCloseThinking()
+  //   }
+  // }
+
   if (!chatId) return null
 
   return (
     <>
-      <Container pt="xl" pb={100}>
+      <Container id="scroll-view" pt="xl" pb={100}>
         <Stack spacing="xs">
-          {messages?.map((message) => (
+          {messages?.map((message, i) => (
             <MessageItem key={message.id.toString()} message={message} />
           ))}
         </Stack>
