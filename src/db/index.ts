@@ -15,7 +15,7 @@ export interface Settings {
   openAiModel?: string
 }
 
-export enum ERole {
+export enum ChatRole {
   SYSTEM = 'system',
   USER = 'user',
   ASSISTANT = 'assistant',
@@ -61,7 +61,7 @@ export class MessageEntity {
   id!: IndexableType
   chatId!: IndexableType
   content!: string
-  role!: ERole
+  role!: ChatRole
   createdAt!: Date
   repliedId!: IndexableType
 
@@ -87,7 +87,7 @@ export class MessageEntity {
     return this
   }
 
-  setRole(role: ERole) {
+  setRole(role: ChatRole) {
     this.role = role
     return this
   }

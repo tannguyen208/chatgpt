@@ -1,6 +1,6 @@
 import {Button, Modal, Stack, Textarea} from '@mantine/core'
 import {memo, useState} from 'react'
-import {ERole, MessageEntity} from '../db'
+import {ChatRole, MessageEntity} from '../db'
 import {useChatGPT} from '../hooks/useChatGPT'
 import {useSharedThinking} from '../hooks/useSharedThinking'
 
@@ -33,7 +33,7 @@ export const ResendMessageEntityItemModal = memo(
               // Add message to the database
               const messageId = await MessageEntity._()
                 .setChatId(message.chatId)
-                .setRole(ERole.USER)
+                .setRole(ChatRole.USER)
                 .setContent(value)
                 .add()
 
@@ -49,7 +49,7 @@ export const ResendMessageEntityItemModal = memo(
               // Add OpenAI's message to the database
               await MessageEntity._()
                 .setChatId(message.chatId)
-                .setRole(ERole.ASSISTANT)
+                .setRole(ChatRole.ASSISTANT)
                 .setContent(assistantMessage)
                 .setRepliedId(messageId)
                 .add()

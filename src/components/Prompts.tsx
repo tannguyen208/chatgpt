@@ -3,7 +3,7 @@ import {IconPlayerPlay} from '@tabler/icons-react'
 import {useNavigate} from '@tanstack/react-location'
 import {useLiveQuery} from 'dexie-react-hooks'
 import {useMemo} from 'react'
-import {ChatEntity, db, ERole, MessageEntity} from '../db'
+import {ChatEntity, db, ChatRole, MessageEntity} from '../db'
 import {useChatGPT} from '../hooks/useChatGPT'
 import {useSharedThinking} from '../hooks/useSharedThinking'
 import {DeletePromptModal} from './DeletePromptModal'
@@ -91,7 +91,7 @@ export function Prompts({
                   const chatId = await ChatEntity._().add()
                   const messageId = await MessageEntity._()
                     .setChatId(chatId)
-                    .setRole(ERole.USER)
+                    .setRole(ChatRole.USER)
                     .setContent(prompt.content)
                     .add()
 
@@ -110,7 +110,7 @@ export function Prompts({
 
                   await MessageEntity._()
                     .setChatId(chatId)
-                    .setRole(ERole.ASSISTANT)
+                    .setRole(ChatRole.ASSISTANT)
                     .setContent(resultDescription)
                     .setRepliedId(messageId)
                     .add()

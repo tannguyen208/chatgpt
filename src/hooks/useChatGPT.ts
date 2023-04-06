@@ -5,6 +5,12 @@ import {ChatCompletionRequestMessage} from 'openai'
 import {db} from '../db'
 import {createChatCompletion} from '../utils/openai'
 
+export interface ISendingParams {
+  chatId?: string | IndexableType
+  content?: string
+  systemContent?: string
+}
+
 export function useChatGPT() {
   const apiKey = useLiveQuery(async () => {
     return (await db.settings.where({id: 'general'}).first())?.openAiApiKey
@@ -22,15 +28,8 @@ export function useChatGPT() {
     return true
   }
 
-  const sendMessage = async ({
-    chatId,
-    content,
-    systemContent,
-  }: {
-    chatId?: string | IndexableType
-    content?: string
-    systemContent?: string
-  } = {}) => {
+  const makeMessagesSendingRequest = async (sending: ISendingParams) => {
+    const {chatId, content, systemContent} = sending
     // Declare two empty arrays to store chat messages
     let messagesCached: ChatCompletionRequestMessage[] = []
     let messagesSending: ChatCompletionRequestMessage[] = []
@@ -58,9 +57,14 @@ export function useChatGPT() {
       messagesSending.push({role: 'user', content: content.trim()})
     }
 
+    return messagesSending
+  }
+
+  const sendMessage = async (sending: ISendingParams = {}) => {
+    const messagesSending = await makeMessagesSendingRequest(sending)
     return createChatCompletion(apiKey, messagesSending)
   }
 
-  return {apiKey, checkAPIKey, sendMessage}
+  return {apiKey, checkAPIKey, makeMessagesSendingRequest, sendMessage}
 }
 
